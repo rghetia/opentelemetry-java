@@ -484,9 +484,19 @@ public final class DefaultMeter implements Meter {
   @ThreadSafe
   private static final class NoopMeasure implements Measure {
     private final Type type;
+    private final int labelKeysSize;
 
-    private NoopMeasure(Type type) {
+    @Override
+    public SubMeasure getOrCreateSubMeasure(List<LabelValue> labelValues) {
+      Utils.checkListElementNotNull(Utils.checkNotNull(labelValues, "labelValues"), "labelValue");
+      Utils.checkArgument(
+          labelKeysSize == labelValues.size(), "Label Keys and Label Values don't have same size.");
+      return NoopSubMeasure.INSTANCE;
+    }
+
+    private NoopMeasure(Type type, int labelKeysSize) {
       this.type = type;
+      this.labelKeysSize = labelKeysSize;
     }
 
     @Override
@@ -507,12 +517,36 @@ public final class DefaultMeter implements Meter {
       return NoopMeasurement.INSTANCE;
     }
 
+    private static final class NoopSubMeasure implements SubMeasure {
+      private static final SubMeasure INSTANCE = new NoopSubMeasure();
+
+      private NoopSubMeasure() {}
+
+      @Override
+      public void record(Measurement measuremnt) {}
+    }
+
     private static final class NoopBuilder implements Measure.Builder {
       private Type type = Type.DOUBLE;
+      private int labelKeysSize = 0;
 
       @Override
       public Builder setDescription(String description) {
         Utils.checkNotNull(description, "description");
+        return this;
+      }
+
+      @Override
+      public Builder setLabelKeys(List<LabelKey> labelKeys) {
+        Utils.checkListElementNotNull(Utils.checkNotNull(labelKeys, "labelKeys"), "labelKey");
+        labelKeysSize = labelKeys.size();
+        return this;
+      }
+
+      @Override
+      public Builder addAggregations(List<Aggregation.Type> aggregations) {
+        Utils.checkListElementNotNull(
+            Utils.checkNotNull(aggregations, "aggregations"), "aggregations");
         return this;
       }
 
@@ -530,7 +564,7 @@ public final class DefaultMeter implements Meter {
 
       @Override
       public Measure build() {
-        return new NoopMeasure(type);
+        return new NoopMeasure(type, labelKeysSize);
       }
     }
   }

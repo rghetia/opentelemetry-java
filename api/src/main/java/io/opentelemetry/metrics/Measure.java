@@ -16,6 +16,8 @@
 
 package io.opentelemetry.metrics;
 
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -67,6 +69,36 @@ public interface Measure {
    */
   Measurement createLongMeasurement(long value);
 
+  /**
+   * Creates a {@code SubMeasure} and returns a {@code SubMeasure} if the specified {@code
+   * labelValues} is not already associated with this Measure, else returns an existing {@code
+   * SubMeasure}.
+   *
+   * <p>It is recommended to keep a reference to the SubMeasure instead of always calling this
+   * method for every operations.
+   *
+   * @param labelValues the list of label values. The number of label values must be the same to
+   *     that of the label keys passed to {@link Measure.Builder#setLabelKeys(List)}.
+   * @return a {@code SubMeasure} the value of single measure.
+   * @throws NullPointerException if {@code labelValues} is null OR any element of {@code
+   *     labelValues} is null.
+   * @throws IllegalArgumentException if number of {@code labelValues}s are not equal to the label
+   *     keys.
+   * @since 0.1.0
+   */
+  SubMeasure getOrCreateSubMeasure(List<LabelValue> labelValues);
+
+  /** SubMeasure class for {@code Measure} with fixed label values. */
+  interface SubMeasure {
+    /**
+     * Records measurement against all aggregation associated with {@code SubMeasure}.
+     *
+     * @param measurement the measurement value that is recorded.
+     * @since 0.1.0
+     */
+    void record(Measurement measurement);
+  }
+
   /** Builder class for the {@link Measure}. */
   interface Builder {
     /**
@@ -112,6 +144,26 @@ public interface Measure {
      * @since 0.1.0
      */
     Builder setType(Type type);
+
+    /**
+     * Sets the list of label keys for this {@code Measure}.
+     *
+     * <p>Default value is {@link Collections#emptyList()}
+     *
+     * @param labelKeys the list of label keys for the Metric.
+     * @return this.
+     */
+    Builder setLabelKeys(List<LabelKey> labelKeys);
+
+    /**
+     * Sets the list of label keys for this {@code Measure}.
+     *
+     * <p>Default value is {@link Collections#emptyList()}
+     *
+     * @param aggregations the list of aggregations to apply to this {@code Measure}.
+     * @return this.
+     */
+    Builder addAggregations(List<Aggregation.Type> aggregations);
 
     /**
      * Builds and returns a {@code Measure} with the desired options.
