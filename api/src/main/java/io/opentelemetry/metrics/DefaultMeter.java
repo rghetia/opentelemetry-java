@@ -525,6 +525,12 @@ public final class DefaultMeter implements Meter {
       return NoopMeasurement.INSTANCE;
     }
 
+    @Override
+    public void record(
+        List<Measurement> measurements,
+        DistributedContext distContext,
+        AttachmentValue attachmentValue) {}
+
     private static final class NoopSubMeasure implements SubMeasure {
       private static final SubMeasure INSTANCE = new NoopSubMeasure();
 
