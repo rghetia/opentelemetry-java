@@ -22,6 +22,7 @@ import io.opentelemetry.metrics.CounterLong;
 import io.opentelemetry.metrics.GaugeDouble;
 import io.opentelemetry.metrics.GaugeLong;
 import io.opentelemetry.metrics.Measure;
+import io.opentelemetry.metrics.MeasureBatch;
 import io.opentelemetry.metrics.Measurement;
 import io.opentelemetry.metrics.Meter;
 import io.opentelemetry.trace.SpanContext;
@@ -52,6 +53,11 @@ public class MeterSdk implements Meter {
 
   @Override
   public Measure.Builder measureBuilder(String name) {
+    throw new UnsupportedOperationException("to be implemented");
+  }
+
+  @Override
+  public MeasureBatch.Builder measureBatchBuilder(String name) {
     throw new UnsupportedOperationException("to be implemented");
   }
 

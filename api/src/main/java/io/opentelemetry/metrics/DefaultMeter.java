@@ -83,6 +83,14 @@ public final class DefaultMeter implements Meter {
   }
 
   @Override
+  public MeasureBatch.Builder measureBatchBuilder(String name) {
+    Utils.checkArgument(
+        StringUtils.isPrintableString(name) && name.length() <= NAME_MAX_LENGTH,
+        ERROR_MESSAGE_INVALID_NAME);
+    return new NoopMeasureBatch.NoopBuilder();
+  }
+
+  @Override
   public void record(List<Measurement> measurements) {
     Utils.checkNotNull(measurements, "measurements");
   }
@@ -565,6 +573,28 @@ public final class DefaultMeter implements Meter {
       @Override
       public Measure build() {
         return new NoopMeasure(type, labelKeysSize);
+      }
+    }
+  }
+
+  @ThreadSafe
+  private static final class NoopMeasureBatch implements MeasureBatch {
+
+    private NoopMeasureBatch() {}
+
+    @Override
+    public void record(List<Measurement> measurements, DistributedContext distContext) {}
+
+    private static final class NoopBuilder implements MeasureBatch.Builder {
+      @Override
+      public Builder addMeasures(List<Measure> measures) {
+        Utils.checkListElementNotNull(Utils.checkNotNull(measures, "measures"), "measures");
+        return this;
+      }
+
+      @Override
+      public MeasureBatch build() {
+        return new NoopMeasureBatch();
       }
     }
   }
