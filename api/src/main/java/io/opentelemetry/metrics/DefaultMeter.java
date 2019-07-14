@@ -583,7 +583,10 @@ public final class DefaultMeter implements Meter {
     private NoopMeasureBatch() {}
 
     @Override
-    public void record(List<Measurement> measurements, DistributedContext distContext) {}
+    public void record(
+        List<Measurement> measurements,
+        DistributedContext distContext,
+        AttachmentValue attachmentValue) {}
 
     private static final class NoopBuilder implements MeasureBatch.Builder {
       @Override
