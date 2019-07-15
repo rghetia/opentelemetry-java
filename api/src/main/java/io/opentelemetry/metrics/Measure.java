@@ -106,9 +106,12 @@ public interface Measure {
      * Records measurement against all aggregation associated with {@code SubMeasure}.
      *
      * @param measurement the measurement value that is recorded.
+     * @param distContext the distContext associated with the measurements.
+     * @param attachmentValue the attachment value for exemplar.
      * @since 0.1.0
      */
-    void record(Measurement measurement);
+    void record(
+        Measurement measurement, DistributedContext distContext, AttachmentValue attachmentValue);
   }
 
   /** Builder class for the {@link Measure}. */

@@ -17,7 +17,9 @@
 package io.opentelemetry.examples.measures;
 
 import io.opentelemetry.OpenTelemetry;
+import io.opentelemetry.distributedcontext.DefaultDistributedContextManager;
 import io.opentelemetry.metrics.Aggregation;
+import io.opentelemetry.metrics.AttachmentValue.AttachmentValueString;
 import io.opentelemetry.metrics.LabelKey;
 import io.opentelemetry.metrics.LabelValue;
 import io.opentelemetry.metrics.Measure;
@@ -74,7 +76,13 @@ public final class WorkloadProcessor {
     doSomeWork();
     double processingTime = (System.nanoTime() - startTime) / 1e6;
     Measurement measurement = workloadProcessing.createDoubleMeasurement(processingTime);
-    workloadProcessingSub.record(measurement);
+
+    // Replace with actual span context.
+    AttachmentValueString attachment = AttachmentValueString.create("span_context");
+    workloadProcessingSub.record(
+        measurement,
+        DefaultDistributedContextManager.getInstance().getCurrentContext(),
+        attachment);
   }
 
   /**

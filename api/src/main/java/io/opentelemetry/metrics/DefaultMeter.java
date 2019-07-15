@@ -532,7 +532,10 @@ public final class DefaultMeter implements Meter {
       private NoopSubMeasure() {}
 
       @Override
-      public void record(Measurement measuremnt) {}
+      public void record(
+          Measurement measuremnt,
+          DistributedContext distContext,
+          AttachmentValue attachmentValue) {}
     }
 
     private static final class NoopBuilder implements Measure.Builder {
