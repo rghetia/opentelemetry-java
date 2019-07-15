@@ -533,7 +533,7 @@ public final class DefaultMeter implements Meter {
 
       @Override
       public void record(
-          Measurement measuremnt,
+          Measurement measurement,
           DistributedContext distContext,
           AttachmentValue attachmentValue) {}
     }
@@ -594,8 +594,8 @@ public final class DefaultMeter implements Meter {
 
     private static final class NoopBuilder implements MeasureBatch.Builder {
       @Override
-      public Builder addMeasures(List<Measure> measures) {
-        Utils.checkListElementNotNull(Utils.checkNotNull(measures, "measures"), "measures");
+      public Builder addMeasure(Measure measure) {
+        Utils.checkNotNull(measure, "measures");
         return this;
       }
 

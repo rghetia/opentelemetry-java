@@ -34,14 +34,14 @@ public abstract class AttachmentValue {
    * Returns the string attachment value.
    *
    * @return the string attachment value.
-   * @since 0.20
+   * @since 0.1
    */
   public abstract String getValue();
 
   /**
    * String {@link AttachmentValue}.
    *
-   * @since 0.20
+   * @since 0.1.0
    */
   @AutoValue
   @Immutable
@@ -54,7 +54,7 @@ public abstract class AttachmentValue {
      *
      * @param value the string value.
      * @return an {@code AttachmentValueString}.
-     * @since 0.20
+     * @since 0.1.0
      */
     public static AttachmentValueString create(String value) {
       return new AutoValue_AttachmentValue_AttachmentValueString(value);

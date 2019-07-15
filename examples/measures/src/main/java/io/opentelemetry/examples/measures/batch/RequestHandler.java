@@ -83,7 +83,9 @@ public final class RequestHandler {
     this.measureBatch =
         meter
             .measureBatchBuilder()
-            .addMeasures(Arrays.asList(requestSize, responseSize, requestLatency))
+            .addMeasure(requestSize)
+            .addMeasure(responseSize)
+            .addMeasure(requestLatency)
             .build();
   }
 
