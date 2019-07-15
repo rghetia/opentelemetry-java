@@ -71,18 +71,15 @@ public interface Measure {
   Measurement createLongMeasurement(long value);
 
   /**
-   * Records list of measurements for each Measures associated with {@code MeasureBatch}.
+   * Records a measurement associated with {@code Measure}.
    *
-   * @param measurements the list of measurements that is recorded for each Measure associated with
-   *     this {@code MeasureBatch}.
+   * @param measurement the measurement that is recorded for this {@code Measure}.
    * @param distContext the distContext associated with the measurements.
    * @param attachmentValue the attachment value for exemplar.
    * @since 0.1.0
    */
   void record(
-      List<Measurement> measurements,
-      DistributedContext distContext,
-      AttachmentValue attachmentValue);
+      Measurement measurement, DistributedContext distContext, AttachmentValue attachmentValue);
 
   /**
    * Creates a {@code SubMeasure} and returns a {@code SubMeasure} if the specified {@code

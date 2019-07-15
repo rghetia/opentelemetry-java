@@ -304,7 +304,7 @@ public class OpenTelemetryTest {
 
     @Nullable
     @Override
-    public MeasureBatch.Builder measureBatchBuilder(String name) {
+    public MeasureBatch.Builder measureBatchBuilder() {
       return null;
     }
 

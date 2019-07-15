@@ -83,10 +83,7 @@ public final class DefaultMeter implements Meter {
   }
 
   @Override
-  public MeasureBatch.Builder measureBatchBuilder(String name) {
-    Utils.checkArgument(
-        StringUtils.isPrintableString(name) && name.length() <= NAME_MAX_LENGTH,
-        ERROR_MESSAGE_INVALID_NAME);
+  public MeasureBatch.Builder measureBatchBuilder() {
     return new NoopMeasureBatch.NoopBuilder();
   }
 
@@ -527,9 +524,7 @@ public final class DefaultMeter implements Meter {
 
     @Override
     public void record(
-        List<Measurement> measurements,
-        DistributedContext distContext,
-        AttachmentValue attachmentValue) {}
+        Measurement measurement, DistributedContext distContext, AttachmentValue attachmentValue) {}
 
     private static final class NoopSubMeasure implements SubMeasure {
       private static final SubMeasure INSTANCE = new NoopSubMeasure();

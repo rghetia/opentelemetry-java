@@ -57,7 +57,7 @@ public class MeterSdk implements Meter {
   }
 
   @Override
-  public MeasureBatch.Builder measureBatchBuilder(String name) {
+  public MeasureBatch.Builder measureBatchBuilder() {
     throw new UnsupportedOperationException("to be implemented");
   }
 
