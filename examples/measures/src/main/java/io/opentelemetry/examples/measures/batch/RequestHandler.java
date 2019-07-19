@@ -18,7 +18,6 @@ package io.opentelemetry.examples.measures.batch;
 
 import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.distributedcontext.DefaultDistributedContextManager;
-import io.opentelemetry.metrics.Aggregation;
 import io.opentelemetry.metrics.AttachmentValue.AttachmentValueString;
 import io.opentelemetry.metrics.LabelKey;
 import io.opentelemetry.metrics.Measure;
@@ -58,7 +57,6 @@ public final class RequestHandler {
             .setUnit("By")
             .setLabelKeys(Arrays.asList(methodKey, statusKey))
             .setType(Measure.Type.LONG)
-            .addAggregations(Arrays.asList(Aggregation.Type.SUM, Aggregation.Type.DISTRIBUTION))
             .build();
     this.responseSize =
         meter
@@ -67,7 +65,6 @@ public final class RequestHandler {
             .setUnit("By")
             .setLabelKeys(Arrays.asList(methodKey, statusKey))
             .setType(Measure.Type.LONG)
-            .addAggregations(Arrays.asList(Aggregation.Type.SUM, Aggregation.Type.DISTRIBUTION))
             .build();
     this.requestLatency =
         meter
@@ -76,9 +73,6 @@ public final class RequestHandler {
             .setUnit("ms")
             .setLabelKeys(Arrays.asList(methodKey, statusKey, hostKey))
             .setType(Measure.Type.DOUBLE)
-            .addAggregations(
-                Arrays.asList(
-                    Aggregation.Type.SUM, Aggregation.Type.DISTRIBUTION, Aggregation.Type.COUNT))
             .build();
     this.measureBatch =
         meter

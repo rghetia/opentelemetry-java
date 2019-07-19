@@ -18,14 +18,12 @@ package io.opentelemetry.examples.measures;
 
 import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.distributedcontext.DefaultDistributedContextManager;
-import io.opentelemetry.metrics.Aggregation;
 import io.opentelemetry.metrics.AttachmentValue.AttachmentValueString;
 import io.opentelemetry.metrics.LabelKey;
 import io.opentelemetry.metrics.LabelValue;
 import io.opentelemetry.metrics.Measure;
 import io.opentelemetry.metrics.Measurement;
 import io.opentelemetry.metrics.Meter;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
@@ -55,7 +53,6 @@ public final class WorkloadProcessor {
             .setUnit("ms")
             .setLabelKeys(Collections.singletonList(workloadTypeKey))
             .setType(Measure.Type.DOUBLE)
-            .addAggregations(Arrays.asList(Aggregation.Type.DISTRIBUTION, Aggregation.Type.COUNT))
             .build();
     LabelValue workloadTypeFoo = LabelValue.create("foo");
     this.workloadProcessingSub =

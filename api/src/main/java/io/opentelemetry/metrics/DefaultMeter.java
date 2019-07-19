@@ -556,13 +556,6 @@ public final class DefaultMeter implements Meter {
       }
 
       @Override
-      public Builder addAggregations(List<Aggregation.Type> aggregations) {
-        Utils.checkListElementNotNull(
-            Utils.checkNotNull(aggregations, "aggregations"), "aggregations");
-        return this;
-      }
-
-      @Override
       public Builder setUnit(String unit) {
         Utils.checkNotNull(unit, "unit");
         return this;

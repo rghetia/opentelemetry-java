@@ -171,16 +171,6 @@ public interface Measure {
     Builder setLabelKeys(List<LabelKey> labelKeys);
 
     /**
-     * Sets the list of label keys for this {@code Measure}.
-     *
-     * <p>Default value is {@link Collections#emptyList()}
-     *
-     * @param aggregations the list of aggregations to apply to this {@code Measure}.
-     * @return this.
-     */
-    Builder addAggregations(List<Aggregation.Type> aggregations);
-
-    /**
      * Builds and returns a {@code Measure} with the desired options.
      *
      * @return a {@code Measure} with the desired options.
