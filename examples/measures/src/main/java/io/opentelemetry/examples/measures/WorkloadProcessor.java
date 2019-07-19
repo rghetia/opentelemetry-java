@@ -21,8 +21,7 @@ import io.opentelemetry.distributedcontext.DefaultDistributedContextManager;
 import io.opentelemetry.metrics.AttachmentValue.AttachmentValueString;
 import io.opentelemetry.metrics.LabelKey;
 import io.opentelemetry.metrics.LabelValue;
-import io.opentelemetry.metrics.Measure;
-import io.opentelemetry.metrics.Measurement;
+import io.opentelemetry.metrics.MeasureDouble;
 import io.opentelemetry.metrics.Meter;
 import java.util.Collections;
 import java.util.Random;
@@ -39,8 +38,8 @@ import java.util.Random;
  */
 public final class WorkloadProcessor {
   private static final LabelKey workloadTypeKey = LabelKey.create("workload_type", "");
-  private final Measure workloadProcessing;
-  private final Measure.SubMeasure workloadProcessingSub; // TODO: Find a better name
+  private final MeasureDouble workloadProcessing;
+  private final MeasureDouble workloadProcessingSub; // TODO: Find a better name
   private final Meter meter;
 
   /** Constructs a WorkloadProcessor that measures processing latency. */
@@ -48,11 +47,10 @@ public final class WorkloadProcessor {
     this.meter = OpenTelemetry.getMeter();
     this.workloadProcessing =
         meter
-            .measureBuilder("workload_processing_latency")
+            .measureDoubleBuilder("workload_processing_latency")
             .setDescription("measurement associated with workload processing")
             .setUnit("ms")
             .setLabelKeys(Collections.singletonList(workloadTypeKey))
-            .setType(Measure.Type.DOUBLE)
             .build();
     LabelValue workloadTypeFoo = LabelValue.create("foo");
     this.workloadProcessingSub =
@@ -72,12 +70,11 @@ public final class WorkloadProcessor {
     long startTime = System.nanoTime();
     doSomeWork();
     double processingTime = (System.nanoTime() - startTime) / 1e6;
-    Measurement measurement = workloadProcessing.createDoubleMeasurement(processingTime);
 
     // Replace with actual span context.
     AttachmentValueString attachment = AttachmentValueString.create("span_context");
     workloadProcessingSub.record(
-        measurement,
+        processingTime,
         DefaultDistributedContextManager.getInstance().getCurrentContext(),
         attachment);
   }

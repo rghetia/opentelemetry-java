@@ -83,6 +83,22 @@ public final class DefaultMeter implements Meter {
   }
 
   @Override
+  public MeasureDouble.Builder measureDoubleBuilder(String name) {
+    Utils.checkArgument(
+        StringUtils.isPrintableString(name) && name.length() <= NAME_MAX_LENGTH,
+        ERROR_MESSAGE_INVALID_NAME);
+    return new NoopMeasureDouble.NoopBuilder();
+  }
+
+  @Override
+  public MeasureLong.Builder measureLongBuilder(String name) {
+    Utils.checkArgument(
+        StringUtils.isPrintableString(name) && name.length() <= NAME_MAX_LENGTH,
+        ERROR_MESSAGE_INVALID_NAME);
+    return new NoopMeasureLong.NoopBuilder();
+  }
+
+  @Override
   public MeasureBatch.Builder measureBatchBuilder() {
     return new NoopMeasureBatch.NoopBuilder();
   }
@@ -570,6 +586,106 @@ public final class DefaultMeter implements Meter {
       @Override
       public Measure build() {
         return new NoopMeasure(type, labelKeysSize);
+      }
+    }
+  }
+
+  @ThreadSafe
+  private static final class NoopMeasureLong implements MeasureLong {
+    private final int labelKeysSize;
+    private static final NoopMeasureLong INSTANCE = new NoopMeasureLong(0);
+
+    @Override
+    public MeasureLong getOrCreateSubMeasure(List<LabelValue> labelValues) {
+      Utils.checkListElementNotNull(Utils.checkNotNull(labelValues, "labelValues"), "labelValue");
+      Utils.checkArgument(
+          labelKeysSize == labelValues.size(), "Label Keys and Label Values don't have same size.");
+      return NoopMeasureLong.INSTANCE;
+    }
+
+    private NoopMeasureLong(int labelKeysSize) {
+      this.labelKeysSize = labelKeysSize;
+    }
+
+    @Override
+    public void record(
+        long value, DistributedContext distContext, AttachmentValue attachmentValue) {}
+
+    private static final class NoopBuilder implements MeasureLong.Builder {
+      private int labelKeysSize = 0;
+
+      @Override
+      public Builder setDescription(String description) {
+        Utils.checkNotNull(description, "description");
+        return this;
+      }
+
+      @Override
+      public Builder setLabelKeys(List<LabelKey> labelKeys) {
+        Utils.checkListElementNotNull(Utils.checkNotNull(labelKeys, "labelKeys"), "labelKey");
+        labelKeysSize = labelKeys.size();
+        return this;
+      }
+
+      @Override
+      public Builder setUnit(String unit) {
+        Utils.checkNotNull(unit, "unit");
+        return this;
+      }
+
+      @Override
+      public MeasureLong build() {
+        return new NoopMeasureLong(labelKeysSize);
+      }
+    }
+  }
+
+  @ThreadSafe
+  private static final class NoopMeasureDouble implements MeasureDouble {
+    private final int labelKeysSize;
+    private static final NoopMeasureDouble INSTANCE = new NoopMeasureDouble(0);
+
+    @Override
+    public MeasureDouble getOrCreateSubMeasure(List<LabelValue> labelValues) {
+      Utils.checkListElementNotNull(Utils.checkNotNull(labelValues, "labelValues"), "labelValue");
+      Utils.checkArgument(
+          labelKeysSize == labelValues.size(), "Label Keys and Label Values don't have same size.");
+      return NoopMeasureDouble.INSTANCE;
+    }
+
+    private NoopMeasureDouble(int labelKeysSize) {
+      this.labelKeysSize = labelKeysSize;
+    }
+
+    @Override
+    public void record(
+        double value, DistributedContext distContext, AttachmentValue attachmentValue) {}
+
+    private static final class NoopBuilder implements MeasureDouble.Builder {
+      private int labelKeysSize = 0;
+
+      @Override
+      public Builder setDescription(String description) {
+        Utils.checkNotNull(description, "description");
+        return this;
+      }
+
+      @Override
+      public Builder setLabelKeys(List<LabelKey> labelKeys) {
+        Utils.checkListElementNotNull(Utils.checkNotNull(labelKeys, "labelKeys"), "labelKey");
+        labelKeysSize = labelKeys.size();
+        return this;
+      }
+
+      @Override
+      public Builder setUnit(String unit) {
+        Utils.checkNotNull(unit, "unit");
+        return this;
+      }
+
+      @Override
+      public MeasureDouble build() {
+        return new NoopMeasureDouble(labelKeysSize);
       }
     }
   }
