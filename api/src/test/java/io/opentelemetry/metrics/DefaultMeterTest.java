@@ -22,7 +22,6 @@ import io.opentelemetry.distributedcontext.EntryKey;
 import io.opentelemetry.distributedcontext.EntryValue;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import javax.annotation.Nullable;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,11 +38,10 @@ public final class DefaultMeterTest {
 
   private static final Meter defaultMeter = DefaultMeter.getInstance();
 
-  private static final Measure MEASURE =
+  private static final MeasureDouble MEASURE_DOUBLE =
       defaultMeter
-          .measureBuilder("my measure")
+          .measureDoubleBuilder("my measure")
           .setDescription("description")
-          .setType(Measure.Type.DOUBLE)
           .setUnit("1")
           .build();
 
@@ -96,23 +94,6 @@ public final class DefaultMeterTest {
   // exception.
   @Test
   public void noopStatsRecorder_Record() {
-    List<Measurement> measurements = Collections.singletonList(MEASURE.createDoubleMeasurement(5));
-    defaultMeter.record(measurements, distContext);
-  }
-
-  // The NoopStatsRecorder should do nothing, so this test just checks that record doesn't throw an
-  // exception.
-  @Test
-  public void noopStatsRecorder_RecordWithCurrentContext() {
-    List<Measurement> measurements = Collections.singletonList(MEASURE.createDoubleMeasurement(6));
-    defaultMeter.record(measurements);
-  }
-
-  @Test
-  public void noopStatsRecorder_Record_DisallowNulldistContext() {
-    List<Measurement> measurements = Collections.singletonList(MEASURE.createDoubleMeasurement(6));
-    thrown.expect(NullPointerException.class);
-    thrown.expectMessage("distContext");
-    defaultMeter.record(measurements, null);
+    MEASURE_DOUBLE.record(5, distContext, null);
   }
 }

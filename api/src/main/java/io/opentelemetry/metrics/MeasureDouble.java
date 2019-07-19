@@ -17,7 +17,6 @@
 package io.opentelemetry.metrics;
 
 import io.opentelemetry.distributedcontext.DistributedContext;
-import java.util.Collections;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -27,7 +26,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * @since 0.1.0
  */
 @ThreadSafe
-public interface MeasureDouble {
+public interface MeasureDouble extends Measure {
   /**
    * Records a measurement associated with {@code MeasureDouble}.
    *
@@ -57,55 +56,5 @@ public interface MeasureDouble {
   MeasureDouble getOrCreateSubMeasure(List<LabelValue> labelValues);
 
   /** Builder class for the {@link MeasureDouble}. */
-  interface Builder {
-    /**
-     * Sets the detailed description of the measure, used in documentation.
-     *
-     * <p>Default description is {@code ""}.
-     *
-     * @param description the detailed description of the {@code MeasureDouble}.
-     * @return this.
-     * @since 0.1.0
-     */
-    Builder setDescription(String description);
-
-    /**
-     * Sets the units in which {@code MeasureDouble} values are measured.
-     *
-     * <p>The suggested grammar for a unit is as follows:
-     *
-     * <ul>
-     *   <li>Expression = Component { "." Component } {"/" Component };
-     *   <li>Component = [ PREFIX ] UNIT [ Annotation ] | Annotation | "1";
-     *   <li>Annotation = "{" NAME "}" ;
-     * </ul>
-     *
-     * <p>For example, string “MBy{transmitted}/ms” stands for megabytes per milliseconds, and the
-     * annotation transmitted inside {} is just a comment of the unit.
-     *
-     * <p>Default unit is {@code "1"}.
-     *
-     * @param unit the units in which {@code MeasureDouble} values are measured.
-     * @return this.
-     * @since 0.1.0
-     */
-    Builder setUnit(String unit);
-
-    /**
-     * Sets the list of label keys for this {@code MeasureDouble}.
-     *
-     * <p>Default value is {@link Collections#emptyList()}
-     *
-     * @param labelKeys the list of label keys for the Metric.
-     * @return this.
-     */
-    Builder setLabelKeys(List<LabelKey> labelKeys);
-
-    /**
-     * Builds and returns a {@code MeasureDouble} with the desired options.
-     *
-     * @return a {@code MeasureDouble} with the desired options.
-     */
-    MeasureDouble build();
-  }
+  interface Builder extends Measure.Builder<Builder, MeasureDouble> {}
 }

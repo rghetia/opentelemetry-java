@@ -36,19 +36,12 @@ public final class MeasureTest {
     Arrays.fill(chars, 'a');
     String longName = String.valueOf(chars);
     thrown.expect(IllegalArgumentException.class);
-    meter.measureBuilder(longName).build();
+    meter.measureDoubleBuilder(longName).build();
   }
 
   @Test
   public void preventNonPrintableMeasureName() {
     thrown.expect(IllegalArgumentException.class);
-    meter.measureBuilder("\2").build();
-  }
-
-  @Test
-  public void preventNegativeValue() {
-    Measure myMeasure = meter.measureBuilder("MyMeasure").build();
-    thrown.expect(IllegalArgumentException.class);
-    myMeasure.createDoubleMeasurement(-5);
+    meter.measureDoubleBuilder("\2").build();
   }
 }

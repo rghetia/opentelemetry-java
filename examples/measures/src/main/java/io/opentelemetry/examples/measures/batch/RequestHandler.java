@@ -20,6 +20,7 @@ import io.opentelemetry.OpenTelemetry;
 import io.opentelemetry.distributedcontext.DefaultDistributedContextManager;
 import io.opentelemetry.metrics.AttachmentValue.AttachmentValueString;
 import io.opentelemetry.metrics.LabelKey;
+import io.opentelemetry.metrics.MeasureBatch;
 import io.opentelemetry.metrics.MeasureDouble;
 import io.opentelemetry.metrics.MeasureLong;
 import io.opentelemetry.metrics.Meter;
@@ -43,7 +44,7 @@ public final class RequestHandler {
   private final MeasureLong requestSize;
   private final MeasureLong responseSize;
   private final MeasureDouble requestLatency;
-  // private final MeasureBatch measureBatch;
+  private final MeasureBatch measureBatch;
   private final Meter meter;
 
   /** Constructs a RequestHandler that measures processing latency. */
@@ -70,13 +71,13 @@ public final class RequestHandler {
             .setUnit("ms")
             .setLabelKeys(Arrays.asList(methodKey, statusKey, hostKey))
             .build();
-    //    this.measureBatch =
-    //        meter
-    //            .measureBatchBuilder()
-    //            .addMeasure(requestSize)
-    //            .addMeasure(responseSize)
-    //            .addMeasure(requestLatency)
-    //            .build();
+    this.measureBatch =
+        meter
+            .measureBatchBuilder()
+            .addMeasure(requestSize)
+            .addMeasure(responseSize)
+            .addMeasure(requestLatency)
+            .build();
   }
 
   private static void doSomeWork() {
@@ -92,25 +93,15 @@ public final class RequestHandler {
     long startTime = System.nanoTime();
     doSomeWork();
     double processLatency = (System.nanoTime() - startTime) / 1e6;
+    long reqSize = new Random().nextInt(10);
+    long resSize = new Random().nextInt(10);
 
     // Replace with actual span context.
     AttachmentValueString attachment = AttachmentValueString.create("span_context");
-    requestSize.record(
-        new Random().nextInt(10),
+    measureBatch.record(
+        Arrays.asList((Number) reqSize, (Number) resSize, (Number) processLatency),
         DefaultDistributedContextManager.getInstance().getCurrentContext(),
         attachment);
-    responseSize.record(
-        new Random().nextInt(10),
-        DefaultDistributedContextManager.getInstance().getCurrentContext(),
-        attachment);
-    requestLatency.record(
-        processLatency,
-        DefaultDistributedContextManager.getInstance().getCurrentContext(),
-        attachment);
-    //    measureBatch.record(
-    //        Arrays.asList(reqSize, resSize, latency),
-    //        DefaultDistributedContextManager.getInstance().getCurrentContext(),
-    //        attachment);
   }
 
   /**
