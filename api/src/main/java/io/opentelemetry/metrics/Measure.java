@@ -16,6 +16,8 @@
 
 package io.opentelemetry.metrics;
 
+import java.util.Collections;
+import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -25,50 +27,8 @@ import javax.annotation.concurrent.ThreadSafe;
  */
 @ThreadSafe
 public interface Measure {
-  /**
-   * An enum that represents all the possible value types for a {@code Measure} or a {@code
-   * io.opentelemetry.metrics.Measurement}.
-   *
-   * @since 0.1.0
-   */
-  enum Type {
-    /**
-     * Double typed {@code Measure} or {@code Measurement}.
-     *
-     * @since 0.1.0
-     */
-    DOUBLE,
-
-    /**
-     * Long typed {@code Measure} or {@code Measurement}.
-     *
-     * @since 0.1.0
-     */
-    LONG
-  }
-
-  /**
-   * Returns a new {@link Measurement} for this {@code Measure}.
-   *
-   * @param value the corresponding {@code double} value for the {@code
-   *     io.opentelemetry.metrics.Measurement}.
-   * @return a new {@link Measurement} for this {@code Measure}.
-   * @throws UnsupportedOperationException if the type is not {@link Measure.Type#DOUBLE}.
-   */
-  Measurement createDoubleMeasurement(double value);
-
-  /**
-   * Returns a new {@link Measurement} for this {@code Measure}.
-   *
-   * @param value the corresponding {@code long} value for the {@code
-   *     io.opentelemetry.metrics.Measurement}.
-   * @return a new {@link Measurement} for this {@code Measure}.
-   * @throws UnsupportedOperationException if the type is not {@link Measure.Type#LONG}.
-   */
-  Measurement createLongMeasurement(long value);
-
   /** Builder class for the {@link Measure}. */
-  interface Builder {
+  interface Builder<B extends Builder<B, T>, T> {
     /**
      * Sets the detailed description of the measure, used in documentation.
      *
@@ -78,7 +38,7 @@ public interface Measure {
      * @return this.
      * @since 0.1.0
      */
-    Builder setDescription(String description);
+    B setDescription(String description);
 
     /**
      * Sets the units in which {@code Measure} values are measured.
@@ -100,24 +60,23 @@ public interface Measure {
      * @return this.
      * @since 0.1.0
      */
-    Builder setUnit(String unit);
+    B setUnit(String unit);
 
     /**
-     * Sets the {@code Type} corresponding to the underlying value of this {@code Measure}.
+     * Sets the list of label keys for this {@code Measure}.
      *
-     * <p>Default {@code Type} is {@link Type#DOUBLE}.
+     * <p>Default value is {@link Collections#emptyList()}
      *
-     * @param type the
+     * @param labelKeys the list of label keys for the Metric.
      * @return this.
-     * @since 0.1.0
      */
-    Builder setType(Type type);
+    B setLabelKeys(List<LabelKey> labelKeys);
 
     /**
      * Builds and returns a {@code Measure} with the desired options.
      *
      * @return a {@code Measure} with the desired options.
      */
-    Measure build();
+    T build();
   }
 }

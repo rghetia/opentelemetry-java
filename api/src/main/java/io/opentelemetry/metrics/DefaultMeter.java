@@ -75,11 +75,24 @@ public final class DefaultMeter implements Meter {
   }
 
   @Override
-  public Measure.Builder measureBuilder(String name) {
+  public MeasureDouble.Builder measureDoubleBuilder(String name) {
     Utils.checkArgument(
         StringUtils.isPrintableString(name) && name.length() <= NAME_MAX_LENGTH,
         ERROR_MESSAGE_INVALID_NAME);
-    return new NoopMeasure.NoopBuilder();
+    return new NoopMeasureDouble.NoopBuilder();
+  }
+
+  @Override
+  public MeasureLong.Builder measureLongBuilder(String name) {
+    Utils.checkArgument(
+        StringUtils.isPrintableString(name) && name.length() <= NAME_MAX_LENGTH,
+        ERROR_MESSAGE_INVALID_NAME);
+    return new NoopMeasureLong.NoopBuilder();
+  }
+
+  @Override
+  public MeasureBatch.Builder measureBatchBuilder() {
+    return new NoopMeasureBatch.NoopBuilder();
   }
 
   @Override
@@ -482,37 +495,46 @@ public final class DefaultMeter implements Meter {
   }
 
   @ThreadSafe
-  private static final class NoopMeasure implements Measure {
-    private final Type type;
+  private static final class NoopMeasureLong implements MeasureLong {
+    private final int labelKeysSize;
+    private static final NoopMeasureLong INSTANCE = new NoopMeasureLong(0);
 
-    private NoopMeasure(Type type) {
-      this.type = type;
+    @Override
+    public MeasureLong getOrCreateSubMeasure(List<LabelValue> labelValues) {
+      Utils.checkListElementNotNull(Utils.checkNotNull(labelValues, "labelValues"), "labelValue");
+      Utils.checkArgument(
+          labelKeysSize == labelValues.size(), "Label Keys and Label Values don't have same size.");
+      return NoopMeasureLong.INSTANCE;
+    }
+
+    private NoopMeasureLong(int labelKeysSize) {
+      this.labelKeysSize = labelKeysSize;
     }
 
     @Override
-    public Measurement createDoubleMeasurement(double value) {
-      if (type != Type.DOUBLE) {
-        throw new UnsupportedOperationException("This type can only create double measurement");
-      }
-      Utils.checkArgument(value >= 0.0, "Unsupported negative values.");
-      return NoopMeasurement.INSTANCE;
-    }
+    public void record(
+        long value, DistributedContext distContext, AttachmentValue attachmentValue) {}
 
     @Override
-    public Measurement createLongMeasurement(long value) {
-      if (type != Type.LONG) {
-        throw new UnsupportedOperationException("This type can only create long measurement");
-      }
-      Utils.checkArgument(value >= 0, "Unsupported negative values.");
-      return NoopMeasurement.INSTANCE;
-    }
+    public void record(
+        long value,
+        DistributedContext distContext,
+        AttachmentValue attachmentValue,
+        Map<LabelKey, LabelValue> labels) {}
 
-    private static final class NoopBuilder implements Measure.Builder {
-      private Type type = Type.DOUBLE;
+    private static final class NoopBuilder implements MeasureLong.Builder {
+      private int labelKeysSize = 0;
 
       @Override
       public Builder setDescription(String description) {
         Utils.checkNotNull(description, "description");
+        return this;
+      }
+
+      @Override
+      public Builder setLabelKeys(List<LabelKey> labelKeys) {
+        Utils.checkListElementNotNull(Utils.checkNotNull(labelKeys, "labelKeys"), "labelKey");
+        labelKeysSize = labelKeys.size();
         return this;
       }
 
@@ -523,20 +545,99 @@ public final class DefaultMeter implements Meter {
       }
 
       @Override
-      public Builder setType(Type type) {
-        this.type = Utils.checkNotNull(type, "type");
+      public MeasureLong build() {
+        return new NoopMeasureLong(labelKeysSize);
+      }
+    }
+  }
+
+  @ThreadSafe
+  private static final class NoopMeasureDouble implements MeasureDouble {
+    private final int labelKeysSize;
+    private static final NoopMeasureDouble INSTANCE = new NoopMeasureDouble(0);
+
+    @Override
+    public MeasureDouble getOrCreateSubMeasure(List<LabelValue> labelValues) {
+      Utils.checkListElementNotNull(Utils.checkNotNull(labelValues, "labelValues"), "labelValue");
+      Utils.checkArgument(
+          labelKeysSize == labelValues.size(), "Label Keys and Label Values don't have same size.");
+      return NoopMeasureDouble.INSTANCE;
+    }
+
+    private NoopMeasureDouble(int labelKeysSize) {
+      this.labelKeysSize = labelKeysSize;
+    }
+
+    @Override
+    public void record(
+        double value, DistributedContext distContext, AttachmentValue attachmentValue) {}
+
+    @Override
+    public void record(
+        double value,
+        DistributedContext distContext,
+        AttachmentValue attachmentValue,
+        Map<LabelKey, LabelValue> labels) {}
+
+    private static final class NoopBuilder implements MeasureDouble.Builder {
+      private int labelKeysSize = 0;
+
+      @Override
+      public Builder setDescription(String description) {
+        Utils.checkNotNull(description, "description");
         return this;
       }
 
       @Override
-      public Measure build() {
-        return new NoopMeasure(type);
+      public Builder setLabelKeys(List<LabelKey> labelKeys) {
+        Utils.checkListElementNotNull(Utils.checkNotNull(labelKeys, "labelKeys"), "labelKey");
+        labelKeysSize = labelKeys.size();
+        return this;
+      }
+
+      @Override
+      public Builder setUnit(String unit) {
+        Utils.checkNotNull(unit, "unit");
+        return this;
+      }
+
+      @Override
+      public MeasureDouble build() {
+        return new NoopMeasureDouble(labelKeysSize);
+      }
+    }
+  }
+
+  @ThreadSafe
+  private static final class NoopMeasureBatch implements MeasureBatch {
+
+    private NoopMeasureBatch() {}
+
+    @Override
+    public void record(
+        List<Number> numbers, DistributedContext distContext, AttachmentValue attachmentValue) {}
+
+    @Override
+    public void record(
+        List<Number> numbers,
+        DistributedContext distContext,
+        AttachmentValue attachmentValue,
+        Map<LabelKey, LabelValue> labels) {}
+
+    private static final class NoopBuilder implements MeasureBatch.Builder {
+      @Override
+      public Builder addMeasure(Measure measure) {
+        Utils.checkNotNull(measure, "measures");
+        return this;
+      }
+
+      @Override
+      public MeasureBatch build() {
+        return new NoopMeasureBatch();
       }
     }
   }
 
   @Immutable
-  private static final class NoopMeasurement implements Measurement {
-    private static final Measurement INSTANCE = new NoopMeasurement();
-  }
+  private static final class NoopMeasurement implements Measurement {}
 }

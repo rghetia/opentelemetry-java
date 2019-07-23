@@ -154,14 +154,32 @@ public interface Meter {
   CounterLong.Builder counterLongBuilder(String name);
 
   /**
-   * Returns a new builder for a {@code Measure}.
+   * Returns a new builder for a {@code MeasureLong}.
    *
    * @param name Name of measure, as a {@code String}. Should be a ASCII string with a length no
    *     greater than 255 characters.
-   * @return a new builder for a {@code Measure}.
+   * @return a new builder for a {@code MeasureLong}.
    * @since 0.1.0
    */
-  Measure.Builder measureBuilder(String name);
+  MeasureLong.Builder measureLongBuilder(String name);
+
+  /**
+   * Returns a new builder for a {@code MeasureDouble}.
+   *
+   * @param name Name of measure, as a {@code String}. Should be a ASCII string with a length no
+   *     greater than 255 characters.
+   * @return a new builder for a {@code MeasureDouble}.
+   * @since 0.1.0
+   */
+  MeasureDouble.Builder measureDoubleBuilder(String name);
+
+  /**
+   * Returns a new builder for a {@code MeasureBatch}.
+   *
+   * @return a new builder for a {@code MeasureBatch}.
+   * @since 0.1.0
+   */
+  MeasureBatch.Builder measureBatchBuilder();
 
   /**
    * Records all given measurements, with the current {@link
