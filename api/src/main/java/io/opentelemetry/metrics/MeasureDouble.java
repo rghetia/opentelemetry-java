@@ -18,6 +18,7 @@ package io.opentelemetry.metrics;
 
 import io.opentelemetry.distributedcontext.DistributedContext;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
@@ -36,6 +37,21 @@ public interface MeasureDouble extends Measure {
    * @since 0.1.0
    */
   void record(double value, DistributedContext distContext, AttachmentValue attachmentValue);
+
+  /**
+   * Records a measurement associated with {@code MeasureDouble}.
+   *
+   * @param value the value that is recorded for this {@code MeasureDouble}.
+   * @param distContext the distContext associated with the value.
+   * @param attachmentValue the attachment value for exemplar.
+   * @param labels additional labels associated with the value that are not part of distContext.
+   * @since 0.1.0
+   */
+  void record(
+      double value,
+      DistributedContext distContext,
+      AttachmentValue attachmentValue,
+      Map<LabelKey, LabelValue> labels);
 
   /**
    * Creates a sub measure for a given set of {@code labelValues} if it is not already associated

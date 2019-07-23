@@ -77,6 +77,19 @@ public final class WorkloadProcessor {
         processingTime,
         DefaultDistributedContextManager.getInstance().getCurrentContext(),
         attachment);
+
+    // TODO: add example for each of the following cases.
+    // Single Measure with only pre-defined label values for all label keys.
+    // Single Measure with pre-defined values label value for some label keys.
+    // Single Measure with dynamic values for the labels from distributed context.
+    // Single Measure with dynamic values for the labels from distributed context
+    //  with additional labels.
+    // Batch Measure with only pre-defined label values for all label keys.
+    // Batch Measure with pre-defined label values for some label keys.
+    // Batch Measure with dynamic values for the labels from distributed context.
+    // Batch Measure with dynamic values for the labels from distributed context
+    //  with additional labels.
+
   }
 
   /**

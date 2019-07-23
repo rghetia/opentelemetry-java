@@ -515,6 +515,13 @@ public final class DefaultMeter implements Meter {
     public void record(
         long value, DistributedContext distContext, AttachmentValue attachmentValue) {}
 
+    @Override
+    public void record(
+        long value,
+        DistributedContext distContext,
+        AttachmentValue attachmentValue,
+        Map<LabelKey, LabelValue> labels) {}
+
     private static final class NoopBuilder implements MeasureLong.Builder {
       private int labelKeysSize = 0;
 
@@ -565,6 +572,13 @@ public final class DefaultMeter implements Meter {
     public void record(
         double value, DistributedContext distContext, AttachmentValue attachmentValue) {}
 
+    @Override
+    public void record(
+        double value,
+        DistributedContext distContext,
+        AttachmentValue attachmentValue,
+        Map<LabelKey, LabelValue> labels) {}
+
     private static final class NoopBuilder implements MeasureDouble.Builder {
       private int labelKeysSize = 0;
 
@@ -602,6 +616,13 @@ public final class DefaultMeter implements Meter {
     @Override
     public void record(
         List<Number> numbers, DistributedContext distContext, AttachmentValue attachmentValue) {}
+
+    @Override
+    public void record(
+        List<Number> numbers,
+        DistributedContext distContext,
+        AttachmentValue attachmentValue,
+        Map<LabelKey, LabelValue> labels) {}
 
     private static final class NoopBuilder implements MeasureBatch.Builder {
       @Override
